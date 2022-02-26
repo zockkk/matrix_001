@@ -48,16 +48,20 @@ public:
         reward += _reward;
     };
 
-    double getReward() {
-        return reward;
-    }
+    double getReward() { return reward; }
+
+    void save(std::string a) { agent.save(a); }
+
+    void set_fromfile(std::string a) { agent.set_fromfile(a); }
 
     void learning(Matrix<double>* _error_Y) {
         agent.set_error_Y(_error_Y);
         agent.backward();
         agent.calcGrad();
-        agent.learn(-0.1);
+        agent.learn(0.1);
     }
+
+    void print() { agent.print(); }
 };
 
 #endif // ABSTRACTAGENT_H_INCLUDED

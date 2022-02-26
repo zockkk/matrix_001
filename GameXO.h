@@ -31,12 +31,12 @@ void game()
 {
 	std::default_random_engine dre(std::chrono::steady_clock::now().time_since_epoch().count());
 	std::vector<double> probabilities(9);
-	AgentXO player1(3, { 9, 9, 9 });
-	AgentXO player2(3, { 9, 9, 9 });
+	AgentXO player1(2, { 9, 9 });
+	AgentXO player2(2, { 9, 9 });
 	EnvironmentXO state;
 	Matrix<double> Y = Matrix <double>::colVector(9);
 	Matrix<double> check=Matrix<double>::colVector(9, 0);
-	const int epoch = 10000;
+	const int epoch = 1000;
 	const int games = 100;
 	bool flag = true;
 	for (int i = 0; i < epoch; i++) {
@@ -92,7 +92,7 @@ void game()
 					std::cout << i << std::endl;
 				}*/
 			}
-			std::cout << player1.getReward() << std::endl << player2.getReward() << std::endl;
+			//std::cout << player1.getReward() << std::endl << player2.getReward() << std::endl;
 			if (!state.nextState(check))
 			{
 				player1.setReward(state.win()*10);
@@ -101,14 +101,18 @@ void game()
 				//std::cout << state.win() << std::endl;
 			}
 			//state.print();
-			//state.restart();
+			state.restart();
 		}
 		std::cout << player1.getReward() << std::endl << player2.getReward() << std::endl;
-		errors_Y1 *= (1.0 / games)*player1.getReward();
+		errors_Y1 *= (-1.0 / games)*player1.getReward();
 		//errors_Y1.print();
-		player1.learning(&errors_Y1);
-		errors_Y2 *= (1.0 / games) * player2.getReward();
-		player2.learning(&errors_Y2);
+		//player1.print();
+		player1.save(std::to_string(i) + ".txt");
+		//player1.print();
+		player1.learning(&errors_Y1);// ERROR
+		//player2.set_fromfile(std::to_string(i) + ".txt");
+		//errors_Y2 *= (1.0 / games) * player2.getReward();
+		//player2.learning(&errors_Y2);
 		player1.setReward(-player1.getReward());
 		player2.setReward(-player2.getReward());
 	}
