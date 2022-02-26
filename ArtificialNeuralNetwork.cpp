@@ -114,7 +114,7 @@ void ArtificialNeuralNetwork::save(std::string a)
 {
     for (size_t i = 0; i < layers.size(); i += 2) 
     {
-        layers[i]->save("w_directory/" + std::to_string(i) + a);
+        layers[i]->save("w_directory/" + std::to_string(i) + '_' + a);
     }
 }
 
@@ -122,7 +122,7 @@ void ArtificialNeuralNetwork::set_fromfile(std::string a)
 {
     for (size_t i = 0; i < layers.size(); i += 2)
     {
-        layers[i]->set_fromfile("w_directory/" + std::to_string(i) + a);
+        layers[i]->set_fromfile("w_directory/" + std::to_string(i) + '_' + a);
     }
 }
 
