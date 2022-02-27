@@ -31,8 +31,8 @@ void game()
 {
 	std::default_random_engine dre(std::chrono::steady_clock::now().time_since_epoch().count());
 	std::vector<double> probabilities(9);
-	AgentXO player1(2, { 9, 9 });
-	AgentXO player2(2, { 9, 9 });
+	AgentXO player1(3, { 9, 9, 9 });
+	AgentXO player2(3, { 9, 9, 9 });
 	EnvironmentXO state;
 	Matrix<double> Y = Matrix <double>::colVector(9);
 	Matrix<double> check=Matrix<double>::colVector(9, 0);

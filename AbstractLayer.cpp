@@ -6,7 +6,7 @@ FullyConnectedLayer::FullyConnectedLayer(const size_t _n_in, const size_t _n_out
     //W = Matrix<double>::zero(_n_out, _n_in);
     //b = Matrix<double>::colVector(_n_out);
 
-    W = Matrix<double>(_n_out, _n_in, 0.0);
+    W = Matrix<double>(_n_out, _n_in, 0.1);
     b = Matrix<double>::colVector(_n_out, 0.0);
 
     G = Matrix<double>(_n_out, _n_in, 0.0);
@@ -21,6 +21,8 @@ void FullyConnectedLayer::forward()
 void FullyConnectedLayer::backward()
 {
     (*error_X) = W.t() * (*error_Y);
+    //std::cout << "errors" << std::endl;
+    //error_X->print();
 }
 
 void FullyConnectedLayer::calcGrad()
@@ -92,6 +94,8 @@ void ActivationLayer::backward()
     {
         error_X->set(i, 0, error_Y->get(i, 0) * func->df(X->get(i, 0)));
     }
+    //std::cout << "errorFunc" << std::endl;
+    //error_X->print();
 }
 
 void ActivationFunctionSoftmax::forward()
@@ -142,6 +146,8 @@ void ActivationFunctionSoftmax::backward()
     }
 
     (*error_X) = J * (*error_Y);
+    //std::cout << "errorFunc" << std::endl;
+    //error_X->print();
 }
 
 
