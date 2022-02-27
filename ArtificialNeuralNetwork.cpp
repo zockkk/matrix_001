@@ -370,19 +370,19 @@ std::vector<Matrix<double>> Train_Y_004(std::vector<Matrix<double>> x)
     std::vector<Matrix<double>> Z(x.size());
 
     FullyConnectedLayer ann1(3, 4);
-    Matrix<double> w = Matrix<double>::matrix({ {2.0, 4.0, -2.0}, {-2.0, -4.0, 2.0}, {-1.0, 2.0, 4.0}, {-1.0, 2.0, -3.0} });
+    Matrix<double> w = Matrix<double>::matrix({ {2.0, 4.0, -2.0}, {-6.0, -4.0, 2.0}, {-9.0, 8.0, 4.0}, {-1.0, 2.0, -3.0} });
     Matrix<double> b = Matrix<double>::matrix({ {0.0}, {0.0}, {0.0}, {0.0} });
     ann1.set_w(w);
     ann1.set_b(b);
     ActivationLayer ann2(4, new ActivationFunctionTh());
     FullyConnectedLayer ann3(4, 3);
-    Matrix<double> w2 = Matrix<double>::matrix({ {2.0, 4.0, 1.0, 2.0}, {-2.0, -2.0, 2.0, -1.0}, {-4.0, 2.0, 3.0, -1.0} });
+    Matrix<double> w2 = Matrix<double>::matrix({ {1.0, 5.0, 1.0, 2.0}, {-3.0, -2.0, 7.0, -7.0}, {-4.0, 2.0, 3.0, -1.0} });
     Matrix<double> b2 = Matrix<double>::matrix({ {0.0}, {0.0}, {0.0} });
     ann3.set_w(w2);
     ann3.set_b(b2);
     ActivationLayer ann4(3, new ActivationFunctionTh());
     FullyConnectedLayer ann5(3, 2);
-    Matrix<double> w3 = Matrix<double>::matrix({ {2.0, 4.0, -2.0}, {-2.0, -4.0, 2.0} });
+    Matrix<double> w3 = Matrix<double>::matrix({ {1.0, 4.0, -2.0}, {-5.0, -4.0, 6.0} });
     Matrix<double> b3 = Matrix<double>::matrix({ {0.0}, {0.0} });
     ann5.set_w(w3);
     ann5.set_b(b3);
@@ -420,6 +420,8 @@ std::vector<Matrix<double>> Train_Y_004(std::vector<Matrix<double>> x)
 
 void ArtificialNeuralNetwork_UnitTest_004() 
 {
+    //!!! FATAL ERROR  
+
     const size_t n = 20;
     std::vector<Matrix<double>> X_train(n);
     std::vector<Matrix<double>> Y_train(n);
@@ -441,15 +443,15 @@ void ArtificialNeuralNetwork_UnitTest_004()
     ann.add(new ActivationFunctionSoftmax(2));
 
     Matrix<double> X = Matrix<double>::colVector(3);
-    Matrix<double> Y = Matrix<double>::colVector(2);//!изменить
+    Matrix<double> Y = Matrix<double>::colVector(3);//!изменить
 
     Matrix<double> error_X = Matrix<double>::colVector(3);
-    Matrix<double> error_Y = Matrix<double>::colVector(2);//!изменить
+    Matrix<double> error_Y = Matrix<double>::colVector(3);//!изменить
 
     ann.set_error_X(&error_X);
     ann.set_error_Y(&error_Y);
 
-    for (size_t j = 0; j < 1000; j++)
+    for (size_t j = 0; j < 100; j++)
     {
         for (size_t i = 0; i < X_train.size(); i++)
         {
@@ -457,9 +459,10 @@ void ArtificialNeuralNetwork_UnitTest_004()
             ann.setY(&Y);
 
             ann.forward();
-
+            Y.print();
+            Y_train[i].print();
             error_Y = Y - Y_train[i];
-
+            error_Y.print();
             ann.backward();
             ann.calcGrad();
             ann.learn(0.1);
