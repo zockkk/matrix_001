@@ -43,9 +43,9 @@ void ArtificialNeuralNetwork::backward()
 
 void ArtificialNeuralNetwork::calcGrad()
 {
-    for (size_t i = 0; i < layers.size(); i++)
+    for (size_t i = layers.size(); i > 0; i--)
     {
-        layers[i]->calcGrad();
+        layers[i-1]->calcGrad();
     }
 }
 
@@ -353,7 +353,7 @@ std::vector<Matrix<double>> Train_X_004(const size_t n, const size_t m)
         for (size_t j = 0; j < m; j++)
         {
             double r = static_cast<double>(rand()) / RAND_MAX;
-            X[i].set(j, 0, -0.1 * (1.0 - r) + 0.1 * r);
+            X[i].set(j, 0, -1.0 * (1.0 - r) + 1.0 * r);
         }
     }
 
@@ -402,8 +402,8 @@ std::vector<Matrix<double>> Train_Y_004(std::vector<Matrix<double>> x)
         ann2.setX(&Y1[i]);
         ann2.setY(&Y2[i]);
         ann2.forward();
-        ann3.setX(&Y2[i]);
-        ann3.setY(&Y3[i]);
+        ann3.setX(&Y2[i]);//
+        ann3.setY(&Y3[i]);//
         ann3.forward();
         ann4.setX(&Y3[i]);
         ann4.setY(&Y4[i]);
@@ -415,14 +415,14 @@ std::vector<Matrix<double>> Train_Y_004(std::vector<Matrix<double>> x)
         ann6.setY(&Z[i]);
         ann6.forward();
     }
-    return Z;
+    return Y4;
 }
 
 void ArtificialNeuralNetwork_UnitTest_004() 
 {
     //!!! FATAL ERROR  
 
-    const size_t n = 20;
+    const size_t n = 300;
     std::vector<Matrix<double>> X_train(n);
     std::vector<Matrix<double>> Y_train(n);
 
@@ -439,8 +439,8 @@ void ArtificialNeuralNetwork_UnitTest_004()
     ann.add(new ActivationLayer(4, new ActivationFunctionTh()));
     ann.add(new FullyConnectedLayer(4, 3));
     ann.add(new ActivationLayer(3, new ActivationFunctionTh()));
-    ann.add(new FullyConnectedLayer(3, 2));
-    ann.add(new ActivationFunctionSoftmax(2));
+    //ann.add(new FullyConnectedLayer(3, 2));
+    //ann.add(new ActivationFunctionSoftmax(2));
 
     Matrix<double> X = Matrix<double>::colVector(3);
     Matrix<double> Y = Matrix<double>::colVector(3);//!изменить
@@ -451,22 +451,24 @@ void ArtificialNeuralNetwork_UnitTest_004()
     ann.set_error_X(&error_X);
     ann.set_error_Y(&error_Y);
 
-    for (size_t j = 0; j < 100; j++)
+    for (size_t j = 0; j < 1000; j++)
     {
         for (size_t i = 0; i < X_train.size(); i++)
         {
             ann.setX(&X_train[i]);
             ann.setY(&Y);
-
+            //X_train[i].print();
+            //Y_train[i].print();
+            //ann.print();
             ann.forward();
-            Y.print();
-            Y_train[i].print();
+            //Y.print();
+            //Y_train[i].print();
             error_Y = Y - Y_train[i];
-            error_Y.print();
+            //error_Y.print();
             ann.backward();
             ann.calcGrad();
-            ann.learn(0.1);
-
+            ann.learn(0.01);
+            std::cout<< "Test: ||error_Y|| = " << normFrobenius(error_Y) << std::endl;
             //std::cout << "Learn: ||error_Y|| = " << normFrobenius(error_Y) << std::endl;
         }
     }

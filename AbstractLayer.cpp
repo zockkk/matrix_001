@@ -5,8 +5,14 @@ FullyConnectedLayer::FullyConnectedLayer(const size_t _n_in, const size_t _n_out
 {
     //W = Matrix<double>::zero(_n_out, _n_in);
     //b = Matrix<double>::colVector(_n_out);
+    //double r = static_cast<double>(rand()) / RAND_MAX;
 
-    W = Matrix<double>(_n_out, _n_in, 0.1);
+    W = Matrix<double>(_n_out, _n_in, 0.0);
+    for (size_t i = 0; i < _n_out; i++) {
+        for (size_t j = 0; j < _n_in; j++) {
+            W.set(i, j, static_cast<double>(rand()) / RAND_MAX);
+        }
+    }
     b = Matrix<double>::colVector(_n_out, 0.0);
 
     G = Matrix<double>(_n_out, _n_in, 0.0);
@@ -16,6 +22,7 @@ FullyConnectedLayer::FullyConnectedLayer(const size_t _n_in, const size_t _n_out
 void FullyConnectedLayer::forward()
 {
     (*Y) = W * (*X) + b;
+    //Y->print();
 }
 
 void FullyConnectedLayer::backward()
@@ -39,6 +46,9 @@ void FullyConnectedLayer::calcGrad()
     {
         g.set(i, 0, error_Y->get(i, 0));
     }
+    //Y->print();
+    //error_Y->print();
+    //G.print();
 }
 
 void FullyConnectedLayer::learn(const double rate)
