@@ -420,7 +420,7 @@ std::vector<Matrix<double>> Train_Y_004(std::vector<Matrix<double>> x)
 
 void ArtificialNeuralNetwork_UnitTest_004() 
 {
-    //!!! FATAL ERROR  
+    //!!! FATAL ERROR  (Fixed with decreasing weights)
 
     const size_t n = 300;
     std::vector<Matrix<double>> X_train(n);

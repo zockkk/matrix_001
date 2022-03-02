@@ -9,7 +9,7 @@
 int main() {
 	//Matrix_UnitTest();
 	//AbstractLayer_UnitTest();
-	ArtificialNeuralNetwork_UnitTest();
+	//ArtificialNeuralNetwork_UnitTest();
 	//Vector_UnitTest();
-	//game();
+	game();
 }
