@@ -32,7 +32,7 @@ public:
     void forward();
     void backward();
     void calcGrad();
-    void learn(const float rate);
+    void learn(const double rate);
 
     void print();
 

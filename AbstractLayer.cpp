@@ -5,8 +5,14 @@ FullyConnectedLayer::FullyConnectedLayer(const size_t _n_in, const size_t _n_out
 {
     //W = Matrix<double>::zero(_n_out, _n_in);
     //b = Matrix<double>::colVector(_n_out);
+    //double r = static_cast<double>(rand()) / RAND_MAX;
 
     W = Matrix<double>(_n_out, _n_in, 0.0);
+    for (size_t i = 0; i < _n_out; i++) {
+        for (size_t j = 0; j < _n_in; j++) {
+            W.set(i, j, static_cast<double>(rand()) / RAND_MAX);
+        }
+    }
     b = Matrix<double>::colVector(_n_out, 0.0);
 
     G = Matrix<double>(_n_out, _n_in, 0.0);
@@ -16,11 +22,14 @@ FullyConnectedLayer::FullyConnectedLayer(const size_t _n_in, const size_t _n_out
 void FullyConnectedLayer::forward()
 {
     (*Y) = W * (*X) + b;
+    //Y->print();
 }
 
 void FullyConnectedLayer::backward()
 {
     (*error_X) = W.t() * (*error_Y);
+    //std::cout << "errors" << std::endl;
+    //error_X->print();
 }
 
 void FullyConnectedLayer::calcGrad()
@@ -37,6 +46,9 @@ void FullyConnectedLayer::calcGrad()
     {
         g.set(i, 0, error_Y->get(i, 0));
     }
+    //Y->print();
+    //error_Y->print();
+    //G.print();
 }
 
 void FullyConnectedLayer::learn(const double rate)
@@ -92,6 +104,8 @@ void ActivationLayer::backward()
     {
         error_X->set(i, 0, error_Y->get(i, 0) * func->df(X->get(i, 0)));
     }
+    //std::cout << "errorFunc" << std::endl;
+    //error_X->print();
 }
 
 void ActivationFunctionSoftmax::forward()
@@ -142,6 +156,8 @@ void ActivationFunctionSoftmax::backward()
     }
 
     (*error_X) = J * (*error_Y);
+    //std::cout << "errorFunc" << std::endl;
+    //error_X->print();
 }
 
 
