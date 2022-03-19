@@ -43,13 +43,13 @@ void ArtificialNeuralNetwork::backward()
 
 void ArtificialNeuralNetwork::calcGrad()
 {
-    for (size_t i = 0; i < layers.size(); i++)
+    for (size_t i = layers.size(); i > 0; i--)
     {
-        layers[i]->calcGrad();
+        layers[i-1]->calcGrad();
     }
 }
 
-void ArtificialNeuralNetwork::learn(const float rate)
+void ArtificialNeuralNetwork::learn(const double rate)
 {
     for (size_t i = 0; i < layers.size(); i++)
     {
@@ -114,7 +114,7 @@ void ArtificialNeuralNetwork::save(std::string a)
 {
     for (size_t i = 0; i < layers.size(); i += 2) 
     {
-        layers[i]->save("w_directory/" + std::to_string(i) + '_' + a);
+        layers[i]->save("_directory/" + std::to_string(i) + '_' + a);
     }
 }
 
@@ -122,7 +122,7 @@ void ArtificialNeuralNetwork::set_fromfile(std::string a)
 {
     for (size_t i = 0; i < layers.size(); i += 2)
     {
-        layers[i]->set_fromfile("w_directory/" + std::to_string(i) + '_' + a);
+        layers[i]->set_fromfile("_directory/" + std::to_string(i) + '_' + a);
     }
 }
 
@@ -275,7 +275,7 @@ void ArtificialNeuralNetwork_UnitTest_002()
 
 
 
-void ArtificialNeuralNetwork_UnitTest()
+void ArtificialNeuralNetwork_UnitTest_003()
 {
     const size_t n = 20;
     std::vector<Matrix<double>> X_train(n);
@@ -340,4 +340,161 @@ void ArtificialNeuralNetwork_UnitTest()
             error_Y = Y - Y_test[i];
             std::cout << "Test: ||error_Y|| = " << normFrobenius(error_Y) << std::endl;
         }
+}
+
+std::vector<Matrix<double>> Train_X_004(const size_t n, const size_t m)
+{
+    std::vector<Matrix<double>> X(n);
+
+    for (size_t i = 0; i < n; i++)
+    {
+        X[i] = Matrix<double>::colVector(m);
+
+        for (size_t j = 0; j < m; j++)
+        {
+            double r = static_cast<double>(rand()) / RAND_MAX;
+            X[i].set(j, 0, -1.0 * (1.0 - r) + 1.0 * r);
+        }
+    }
+
+    return std::move(X);
+}
+
+std::vector<Matrix<double>> Train_Y_004(std::vector<Matrix<double>> x)
+{
+    std::vector<Matrix<double>> Y1(x.size());
+    std::vector<Matrix<double>> Y2(x.size());
+    std::vector<Matrix<double>> Y3(x.size());
+    std::vector<Matrix<double>> Y4(x.size());
+    std::vector<Matrix<double>> Y5(x.size());
+    std::vector<Matrix<double>> Z(x.size());
+
+    FullyConnectedLayer ann1(3, 4);
+    Matrix<double> w = Matrix<double>::matrix({ {2.0, 4.0, -2.0}, {-6.0, -4.0, 2.0}, {-9.0, 8.0, 4.0}, {-1.0, 2.0, -3.0} });
+    Matrix<double> b = Matrix<double>::matrix({ {0.0}, {0.0}, {0.0}, {0.0} });
+    ActivationLayer ann2(4, new ActivationFunctionTh());
+    FullyConnectedLayer ann3(4, 3);
+    Matrix<double> w2 = Matrix<double>::matrix({ {1.0, 5.0, 1.0, 2.0}, {-3.0, -2.0, 7.0, -7.0}, {-4.0, 2.0, 3.0, -1.0} });
+    Matrix<double> b2 = Matrix<double>::matrix({ {1.0}, {3.0}, {2.0} });
+    ActivationLayer ann4(3, new ActivationFunctionTh());
+    FullyConnectedLayer ann5(3, 2);
+    Matrix<double> w3 = Matrix<double>::matrix({ {1.0, 4.0, -2.0}, {-5.0, -4.0, 6.0} });
+    Matrix<double> b3 = Matrix<double>::matrix({ {-4.0}, {1.0} });
+    ann1.set_w(w);
+    ann1.set_b(b);
+    ann3.set_w(w2);
+    ann3.set_b(b2);
+    ann5.set_w(w3);
+    ann5.set_b(b3);
+    ActivationFunctionSoftmax ann6(2);
+
+    for (size_t i = 0; i < x.size(); i++)
+    {
+        Y1[i] = Matrix<double>::colVector(4);
+        Y2[i] = Matrix<double>::colVector(4);
+        Y3[i] = Matrix<double>::colVector(3);
+        Y4[i] = Matrix<double>::colVector(3);
+        Y5[i] = Matrix<double>::colVector(2);
+        Z[i] = Matrix<double>::colVector(2);
+        /*ann1.setX(&x[i]);
+        ann1.setY(&Y1[i]);
+        ann1.forward();
+        ann2.setX(&Y1[i]);
+        ann2.setY(&Y2[i]);
+        ann2.forward();*/
+        ann3.setX(&x[i]);//
+        ann3.setY(&Y3[i]);//
+        ann3.forward();
+        ann4.setX(&Y3[i]);
+        ann4.setY(&Y4[i]);
+        ann4.forward();
+        ann5.setX(&Y4[i]);
+        ann5.setY(&Y5[i]);
+        ann5.forward();
+        ann6.setX(&Y5[i]);
+        ann6.setY(&Z[i]);
+        ann6.forward();
+    }
+    return Z;
+}
+
+void ArtificialNeuralNetwork_UnitTest_004() 
+{
+    //!!! FATAL ERROR  (Fixed with decreasing weights)
+
+    const size_t n = 300;
+    std::vector<Matrix<double>> X_train(n);
+    std::vector<Matrix<double>> Y_train(n);
+
+    X_train = Train_X_004(n, 4);//
+    Y_train = Train_Y_004(X_train);
+
+    std::vector<Matrix<double>> X_test(30);
+    std::vector<Matrix<double>> Y_test(30);
+    X_test = Train_X_004(30, 4);
+    Y_test = Train_Y_004(X_test);
+
+    ArtificialNeuralNetwork ann;
+    //ann.add(new FullyConnectedLayer(3, 4));
+    //ann.add(new ActivationLayer(4, new ActivationFunctionTh()));
+    ann.add(new FullyConnectedLayer(4, 3));
+    ann.add(new ActivationLayer(3, new ActivationFunctionTh()));
+    ann.add(new FullyConnectedLayer(3, 2));
+    ann.add(new ActivationFunctionSoftmax(2));
+
+    Matrix<double> X = Matrix<double>::colVector(4);
+    Matrix<double> Y = Matrix<double>::colVector(2);//!изменить
+
+    Matrix<double> error_X = Matrix<double>::colVector(4);
+    Matrix<double> error_Y = Matrix<double>::colVector(2);//!изменить
+
+    ann.set_error_X(&error_X);
+    ann.set_error_Y(&error_Y);
+
+    for (size_t j = 0; j < 50000; j++)
+    {
+        for (size_t i = 0; i < X_train.size(); i++)
+        {
+            ann.setX(&X_train[i]);
+            ann.setY(&Y);
+            //X_train[i].print();
+            //Y_train[i].print();
+            //ann.print();
+            ann.forward();
+            //Y.print();
+            //Y_train[i].print();
+            error_Y = Y - Y_train[i];
+            //error_Y.print();
+            ann.backward();
+            ann.calcGrad();
+            ann.learn(0.01);
+            //std::cout << "Learn: ||error_Y|| = " << normFrobenius(error_Y) << std::endl;
+        }
+    }
+
+    /*for (size_t i = 0; i < X_train.size(); i++)
+    {
+        Y_train[i].print();
+    }*/
+
+    ann.print();
+
+    for (size_t i = 0; i < X_test.size(); i++)
+    {
+        ann.setX(&X_test[i]);
+        ann.setY(&Y);
+
+        ann.forward();
+
+        error_Y = Y - Y_test[i];
+        std::cout << "Test: ||error_Y|| = " << normFrobenius(error_Y) << std::endl;
+    }
+}
+
+void ArtificialNeuralNetwork_UnitTest() 
+{
+    //ArtificialNeuralNetwork_UnitTest_001();
+    //ArtificialNeuralNetwork_UnitTest_002();
+    //ArtificialNeuralNetwork_UnitTest_003();
+    ArtificialNeuralNetwork_UnitTest_004();
 }
