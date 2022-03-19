@@ -53,15 +53,12 @@ public:
         if (board.check_draw()) return 0;
     }
 
-    void restart() {
-        board.restart();
-        currentState = *board.get_board();
-    }
+    void restart() { board.restart(); currentState = *board.get_board(); }
+
+    void inversion() { board.inversion(); currentState = *board.get_board(); }
 
     void print() 
-    {
-        board.Print();
-    }
+    { board.Print(); }
 };
 
 #endif // ABSTRACTENVIRONMENT_H_INCLUDED
