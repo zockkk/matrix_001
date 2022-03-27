@@ -103,7 +103,7 @@ public:
 
 	void inversion() {
 		for (size_t i = 0; i < 9; i++) {
-			cells[i][0] *= (-1);
+			cells[i][0] = int(cells[i][0])*(-1);
 		}
 	}
 
