@@ -61,8 +61,13 @@ public:
 
     virtual void print() override;
 
-    void virtual save(std::string a) override;
-    void virtual set_fromfile(std::string a) override;
+    void save_w(std::string a);
+    void save_b(std::string a);
+    void set_w_fromfile(std::string a);
+    void set_b_fromfile(std::string a);
+
+    void virtual save(std::string a) override { save_w('w' + a); save_b('b' + a); }
+    void virtual set_fromfile(std::string a) override { set_w_fromfile('w' + a); set_b_fromfile('b' + a); };
 };
 
 class AbstractActivationFunction
